@@ -1,6 +1,7 @@
 package message
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"zidane/connection"
@@ -25,13 +26,22 @@ func Send() {
 		panic(errors.Wrap(err, "failed to declare queue"))
 	}
 
-	err = ch.Publish("", q.Name, false, false, amqp091.Publishing{
-		ContentType: "text/plain",
-		Body:        []byte(os.Args[2]),
-	})
-	if err != nil {
-		panic(errors.Wrap(err, "failed to publish message"))
+	fmt.Println("Enter Your Message Below: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		err = ch.Publish("", q.Name, false, false, amqp091.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(scanner.Text()),
+		})
+		if err != nil {
+			panic(errors.Wrap(err, "failed to publish message"))
+		}
+		fmt.Println("Message", scanner.Text()+" Sent Successfully")
+		fmt.Println("Enter Your Message Again Below: ")
 	}
 
-	fmt.Println("Send message:", os.Args[2])
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	}
+
 }
