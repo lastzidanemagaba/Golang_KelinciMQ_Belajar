@@ -37,7 +37,7 @@ func Send() {
 			panic(errors.Wrap(err, "failed to publish message"))
 		}
 		fmt.Println("Message", scanner.Text()+" Sent Successfully")
-		fmt.Println("Enter Your Message Again Below: ")
+		fmt.Println("Enter Your Message Again Below : ")
 	}
 
 	if err := scanner.Err(); err != nil {
